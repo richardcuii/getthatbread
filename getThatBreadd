@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GET THAT BREAD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet"> <!-- Importing Google Font -->
+    <style>
+        body {
+            background-color: #f8e0e6; /* Pastel pink */
+        }
+        #app {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            font-family: 'Pacifico', cursive; /* Aesthetic font */
+            margin-bottom: 1em;
+        }
+        input[type="number"] {
+            margin-bottom: 1em;
+            width: 50%;
+        }
+        button {
+            margin-bottom: 2em;
+        }
+        .money {
+            font-size: 2em;
+            margin-bottom: 1em;
+        }
+        .time {
+            font-size: 2em;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>GET THAT BREAD</h1>
+        <input type="number" id="hourlyRate" placeholder="Enter your hourly rate" min="0" step="any">
+        <button onclick="startAccumulator()">Start</button>
+        <div class="money" id="money">$0.00</div>
+        <div class="time" id="time">00:00:00</div>
+    </div>
+    <script>
+        let hourlyRate = 0;
+        let totalMoney = 0;
+        let startTime = null;
+        let moneyInterval = null;
+        let timeInterval = null;
+
+        function startAccumulator() {
+            hourlyRate = document.getElementById('hourlyRate').value;
+            if (hourlyRate == '') {
+                alert('Please enter an hourly rate.');
+                return;
+            }
+            hourlyRate = parseFloat(hourlyRate);
+            if (isNaN(hourlyRate) || hourlyRate < 0) {
+                alert('Invalid hourly rate. Please enter a positive number.');
+                return;
+            }
+
+            if (moneyInterval !== null) {
+                clearInterval(moneyInterval);
+                clearInterval(timeInterval);
+            }
+
+            totalMoney = 0;
+            startTime = Date.now();
+
+            document.getElementById('money').textContent = '$' + totalMoney.toFixed(2);
+
+            moneyInterval = setInterval(() => {
+                const elapsedHours = (Date.now() - startTime) / 1000 / 60 / 60;
+                totalMoney = elapsedHours * hourlyRate;
+                document.getElementById('money').textContent = '$' + totalMoney.toFixed(2);
+            }, 1000);
+
+            timeInterval = setInterval(() => {
+                const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+                const hours = Math.floor(elapsedSeconds / 3600);
+                const minutes = Math.floor((elapsedSeconds % 3600) / 60);
+                const seconds = elapsedSeconds % 60;
+                document.getElementById('time').textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
